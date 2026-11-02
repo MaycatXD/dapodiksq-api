@@ -1,106 +1,51 @@
-# 🏫 DapodikSQ — Kemendikdasmen Data Bridge & REST API Engine
+# 🏫 DapodikSQ API — Official Documentation
 
-[![PHP Version](https://img.shields.io/badge/PHP-8.3-777BB4?style=flat-square&logo=php&logoColor=white)](https://php.net)
-[![Database](https://img.shields.io/badge/MySQL-InnoDB-4479A1?style=flat-square&logo=mysql&logoColor=white)](https://mysql.com)
-[![Frontend](https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=flat-square&logo=bootstrap&logoColor=white)](https://getbootstrap.com)
-[![API Status](https://img.shields.io/badge/REST_API-Active-success?style=flat-square)](#-dokumentasi-rest-api-apiphp)
+[![API Status](https://img.shields.io/badge/API_Status-Online-brightgreen?style=flat-square)](https://hostgmkns.byethost32.com/dapodiksq/api.php)
+[![Response Format](https://img.shields.io/badge/Format-JSON-blue?style=flat-square)](https://json.org)
+[![CORS](https://img.shields.io/badge/CORS-Enabled_%28*%29-success?style=flat-square)](#)
 [![Ecosystem](https://img.shields.io/badge/Ecosystem-SmarQuest_App-blueviolet?style=flat-square)](#)
-[![License](https://img.shields.io/badge/License-Open--Source-orange?style=flat-square)](#-etika-dan-tanggung-jawab-penggunaan)
+[![Access](https://img.shields.io/badge/Access-Public_/_Open--Source-orange?style=flat-square)](#-etika-dan-tanggung-jawab-penggunaan)
 
-**DapodikSQ** adalah *data ingestion engine* dan penyedia layanan *RESTful API* open-source untuk data sekolah nasional (Kemendikdasmen RI). Proyek ini dibangun sebagai subsistem dari ekosistem **SmarQuest App** guna mempermudah aplikasi frontend (Web, Mobile, Flutter, React, Vue) dalam mengonsumsi data sekolah Indonesia tanpa terbebani kerumitan *payload formatting*, *firewall timeout*, maupun parsing berulang.
+**DapodikSQ API** adalah antarmuka *RESTful API* publik dan open-source untuk mengakses data pokok pendidikan (sekolah) se-Indonesia yang dinormalisasi dari Kemendikdasmen RI. 
 
----
-
-## 🌟 Fitur Utama
-
-- 🔄 **Multi-Mode Ingestion (Anti-Timeout / Anti-Block)**:
-  - **Mode Server cURL**: Mengirimkan HTTP POST berformat JSON persis dengan *signature* browser & dukungan Cookie WAF.
-  - **Mode JSON Bridge**: Penyelamat saat server hosting (seperti shared/free hosting) memblokir koneksi keluar (*outbound port 443*). Data respons dapat di-paste langsung untuk disimpan ke MySQL.
-- ⚡ **Auto-Table Migration**: Otomatis membuat tabel `sekolah_dapodik` lengkap dengan indeks dan struktur kolom saat pertama kali dijalankan.
-- 🛡️ **Pencegahan Duplikasi (Upsert Mechanism)**: Menggunakan `ON DUPLICATE KEY UPDATE` berbasis NPSN unik agar sinkronisasi berulang tidak menghasilkan data ganda.
-- 📊 **Dashboard Interaktif (`tampil_data.php`)**:
-  - Filter dinamis berdasarkan Jenjang (SD, SMP, SMA, SMK, dll.) dan Status (Negeri/Swasta).
-  - Pencarian multi-kolom aman (*Prepared Statements*) meliputi Nama, NPSN, Alamat, dan Kota.
-  - Pagination dinamis dan Modal Detail untuk inspeksi JSON mentah.
-- 🚀 **REST API Siap Pakai (`api.php`)**:
-  - Mendukung **CORS** (`Access-Control-Allow-Origin: *`).
-  - Filter lengkap (Jenjang, Status, Kabupaten, Provinsi, NPSN, Kata Kunci).
-  - Sistem pengaman beban server (*Safety Max Limit*) untuk mencegah lag atau kehabisan memori.
-  - Fitur simulasi jeda waktu (`delay`) untuk pengujian UI *skeleton/loading state*.
+Disediakan sebagai layanan fondasi bagi ekosistem **SmarQuest App** agar para pengembang frontend (Web, Mobile, Flutter, React, Vue, Android, iOS) dapat langsung menampilkan, memfilter, dan mencari data sekolah tanpa perlu mengelola server basis data sendiri.
 
 ---
 
-## 📁 Struktur Berkas
+## 📌 Informasi Dasar API
 
-```text
-dapodiksq/
-├── db.php           # Konfigurasi PDO MySQL & pembuatan skema tabel otomatis
-├── ambil_data.php   # Antarmuka penarikan data dari API Kemendikdasmen (POST cURL & JSON Bridge)
-├── tampil_data.php  # Dashboard visual web untuk pencarian, filter, dan monitoring data
-├── api.php          # REST API Endpoint mandiri (Output JSON) untuk SmarQuest App
-└── README.md        # Dokumentasi proyek
-```
+- **Endpoint URL**: `https://hostgmkns.byethost32.com/dapodiksq/api.php`
+- **Metode HTTP**: `GET`
+- **Format Output**: `application/json; charset=utf-8`
+- **Autentikasi**: *Public Open Access* (Tanpa API Key)
+- **Dukungan CORS**: Ya (`Access-Control-Allow-Origin: *`), dapat ditembak langsung dari browser klien tanpa kendala CORS.
 
 ---
 
-## ⚙️ Prasyarat Sistem
+## 🔍 Parameter Query URL (Request)
 
-- **PHP**: Versi **8.3** atau yang lebih baru (ekstensi: `pdo_mysql`, `curl`, `json`, `mbstring`).
-- **Database**: MySQL 5.7+ / MariaDB 10.3+ (Engine: `InnoDB`, Collation: `utf8mb4_unicode_ci`).
-- **Web Server**: Apache / Nginx / LiteSpeed.
+Anda dapat menggabungkan beberapa parameter query sekaligus untuk memfilter data sekolah secara presisi:
 
----
-
-## 🚀 Panduan Instalasi
-
-### 1. Salin Berkas
-Unggah seluruh berkas ke direktori web server Anda (misalnya `public_html/` atau `htdocs/`).
-
-### 2. Konfigurasi Basis Data
-Buka berkas **`db.php`** dan sesuaikan kredensial database Anda:
-
-```php
-define('DB_HOST', 'localhost'); // atau host MySQL cluster Anda
-define('DB_NAME', 'nama_database');
-define('DB_USER', 'username_db');
-define('DB_PASS', 'password_db');
-```
-
-> **Catatan:** Anda tidak perlu mengimpor file `.sql` secara manual. Saat Anda pertama kali mengakses `ambil_data.php` atau `tampil_data.php`, sistem akan membuatkan tabel `sekolah_dapodik` secara otomatis.
-
----
-
-## 📖 Dokumentasi REST API (`api.php`)
-
-Endpoint ini menghasilkan output JSON standar yang siap digunakan oleh modul apa pun pada **SmarQuest App**.
-
-- **URL Dasar**: `https://hostgmkns.byethost32.com/dapodiksq/api.php`
-- **Metode**: `GET`
-- **Format Respons**: `application/json`
-
-### Parameter Query URL
-
-| Parameter | Tipe | Contoh Nilai | Deskripsi |
+| Parameter | Tipe | Contoh Nilai | Keterangan |
 | :--- | :--- | :--- | :--- |
-| `q` / `keyword` | `string` | `Negeri 1` | Mencari kata kunci pada Nama, NPSN, atau Alamat. |
-| `bentuk` / `jenjang` | `string` | `SMK`, `SMA`, `SMP`, `SD` | Memfilter berdasarkan jenjang pendidikan. |
-| `status` | `string` | `Negeri`, `Swasta` | Memfilter berdasarkan status kepemilikan sekolah. |
-| `kab` / `kabupaten` | `string` | `Bandung` | Memfilter nama kabupaten atau kota. |
-| `prov` / `provinsi` | `string` | `Jawa Barat` | Memfilter nama provinsi. |
-| `npsn` | `string` | `20219141` | Mengambil data sekolah secara spesifik berdasarkan NPSN. |
-| `page` | `integer` | `1` (Default: 1) | Nomor halaman data. |
-| `limit` | `integer` | `25` (Maks: 200, atau `all` untuk maks 500) | Jumlah data per respons. |
-| `delay` | `integer` | `500` (ms) atau `2` (detik) | Menambahkan jeda waktu buatan (maks. 3000 ms) untuk tes UI. |
-| `raw` | `boolean` | `true` / `1` | Menyertakan data mentah asli dari Kemendikdasmen. |
+| `q` / `keyword` | `string` | `Negeri 1` | Mencari kata kunci pada **Nama Sekolah**, **NPSN**, atau **Alamat**. |
+| `npsn` | `string` | `20219141` | Pencarian spesifik sekolah berdasarkan 8 digit NPSN. |
+| `bentuk` / `jenjang` | `string` | `SMK`, `SMA`, `SMP`, `SD` | Filter berdasarkan jenjang pendidikan sekolah. |
+| `status` | `string` | `Negeri`, `Swasta` | Filter berdasarkan status kepemilikan sekolah. |
+| `kab` / `kabupaten` | `string` | `Bandung` | Filter berdasarkan nama Kabupaten atau Kota. |
+| `prov` / `provinsi` | `string` | `Jawa Barat` | Filter berdasarkan nama Provinsi. |
+| `kecamatan` | `string` | `Katapang` | Filter berdasarkan nama Kecamatan. |
+| `page` | `integer` | `1` *(Default: 1)* | Nomor halaman (*pagination*). |
+| `limit` | `integer` | `25` *(Default: 25)* | Jumlah baris data per respons (Maks. 200, atau `all` untuk 500). |
+| `delay` | `integer` | `500` *(ms)* atau `2` *(detik)* | Menambahkan jeda simulasi respons (Maks. 3000 ms) untuk tes UI *skeleton/loading*. |
+| `raw` | `boolean` | `true` atau `1` | Menyertakan objek payload mentah asli dari Kemendikdasmen (`raw_data`). |
 
-### Contoh Pemanggilan
+---
 
-#### 1. Mengambil Daftar SMK Negeri di Kabupaten Bandung (Page 1)
-```http
-GET /api.php?bentuk=SMK&status=Negeri&kab=Bandung&limit=15&page=1
-```
+## 📥 Format Respons JSON
 
-#### 2. Contoh Respons JSON:
+### Struktur Utama (Envelope)
+
 ```json
 {
   "status": "success",
@@ -144,35 +89,134 @@ GET /api.php?bentuk=SMK&status=Negeri&kab=Bandung&limit=15&page=1
 
 ---
 
-## 🛠️ Panduan Penggunaan Panel Sinkronisasi (`ambil_data.php`)
+## 💡 Contoh Kasus Penggunaan (URL Request)
 
-1. Buka halaman `ambil_data.php` melalui browser Anda.
-2. Terdapat dua tab metode:
-   - **Metode 1 (POST cURL Server)**:
-     - Masukkan kata kunci (misal: `SMK negeri`), ukuran data (`size`: 50 atau 100).
-     - Kolom *Cookie WAF* bersifat opsional jika server Kemendikdasmen meminta verifikasi cookie sesi (`TSc78de468027`).
-     - Klik **Kirim Permintaan POST cURL & Simpan ke MySQL**.
-   - **Metode 2 (Paste JSON Langsung)**:
-     - Gunakan metode ini bila hosting Anda mengalami *timeout* akibat firewall outbound.
-     - Ambil JSON menggunakan cURL lokal, DevTools, atau Postman.
-     - Tempel teks respons JSON ke textarea yang tersedia, lalu klik **Simpan JSON Tersebut ke Database**.
+1. **Mengambil Daftar Sekolah Default (25 item pertama)**:
+   ```text
+   GET https://hostgmkns.byethost32.com/dapodiksq/api.php
+   ```
+
+2. **Mencari Semua SMK Negeri di Kabupaten Bandung (15 data per halaman)**:
+   ```text
+   GET https://hostgmkns.byethost32.com/dapodiksq/api.php?bentuk=SMK&status=Negeri&kab=Bandung&limit=15&page=1
+   ```
+
+3. **Mencari Sekolah Berdasarkan NPSN Tertentu**:
+   ```text
+   GET https://hostgmkns.byethost32.com/dapodiksq/api.php?npsn=20219141
+   ```
+
+4. **Pencarian Bebas Kata Kunci (Misal: "Sawah") di Provinsi Jawa Tengah**:
+   ```text
+   GET https://hostgmkns.byethost32.com/dapodiksq/api.php?q=Sawah&prov=Jawa Tengah
+   ```
+
+5. **Tes Efek Loading Skeleton pada UI (Simulasi Delay 600 ms)**:
+   ```text
+   GET https://hostgmkns.byethost32.com/dapodiksq/api.php?bentuk=SMA&delay=600
+   ```
+
+---
+
+## 💻 Panduan Menghubungkan API ke Aplikasi
+
+### 1. JavaScript (Fetch API / Browser / Node.js)
+```javascript
+const apiUrl = 'https://hostgmkns.byethost32.com/dapodiksq/api.php?bentuk=SMK&status=Negeri&kab=Bandung';
+
+async function getSekolah() {
+  try {
+    const res = await fetch(apiUrl);
+    const json = await res.json();
+    
+    if (json.status === 'success') {
+      console.log(`Ditemukan ${json.pagination.total_rows} sekolah:`);
+      json.data.forEach(item => {
+        console.log(`- [${item.npsn}] ${item.nama_sekolah} (${item.kabupaten_kota})`);
+      });
+    }
+  } catch (error) {
+    console.error('Gagal mengambil data:', error);
+  }
+}
+
+getSekolah();
+```
+
+### 2. Flutter / Dart
+```dart
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+Future<void> fetchSekolah() async {
+  final url = Uri.parse('https://hostgmkns.byethost32.com/dapodiksq/api.php?bentuk=SMA&limit=10');
+  final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> body = json.decode(response.body);
+    List sekolahList = body['data'];
+    print('Total data diambil: ${sekolahList.length}');
+  } else {
+    throw Exception('Gagal memuat API DapodikSQ');
+  }
+}
+```
+
+### 3. Python (Requests)
+```python
+import requests
+
+url = "https://hostgmkns.byethost32.com/dapodiksq/api.php"
+params = {
+    "bentuk": "SMK",
+    "status": "Negeri",
+    "limit": 10
+}
+
+response = requests.get(url, params=params)
+if response.status_code == 200:
+    res_data = response.json()
+    for s in res_data.get("data", []):
+        print(f"{s['npsn']} - {s['nama_sekolah']}")
+```
+
+### 4. PHP (cURL / Client)
+```php
+<?php
+$apiUrl = 'https://hostgmkns.byethost32.com/dapodiksq/api.php?bentuk=SMP&limit=5';
+$json = file_get_contents($apiUrl);
+$data = json_decode($json, true);
+
+if ($data['status'] === 'success') {
+    foreach ($data['data'] as $sch) {
+        echo $sch['nama_sekolah'] . " - " . $sch['kabupaten_kota'] . PHP_EOL;
+    }
+}
+```
+
+---
+
+## ⚠️ Kode Status HTTP (Status Codes)
+
+| Kode | Arti | Deskripsi |
+| :--- | :--- | :--- |
+| `200 OK` | Sukses | Permintaan berhasil diproses dan data dikembalikan. |
+| `500 Internal Server Error` | Error Server | Terjadi kesalahan query basis data atau koneksi server gagal. |
 
 ---
 
 ## ⚖️ Etika dan Tanggung Jawab Penggunaan
 
-Aplikasi ini dipublikasikan sebagai perangkat lunak sumber terbuka (*open-source software*) di bawah naungan ekosistem **SmarQuest App**. 
+API ini dibuka untuk publik sebagai bagian dari inisiatif open-source ekosistem **SmarQuest App**. 
 
-Setiap pengembang, peneliti, maupun institusi bebas menggunakan, memodifikasi, dan mendistribusikan kode ini dengan ketentuan etis:
+Semua orang diperbolehkan menggunakan API ini untuk kebutuhan pendidikan, portofolio, penelitian, maupun aplikasi komersial dengan syarat **bertanggung jawab dan penuh kesadaran**:
 
-1. **Penuh Kesadaran & Tanggung Jawab**: Jangan melakukan *bombardir request* (DDoS/spamming) ke server Kemendikdasmen. Berikan jeda (*rate-limiting*) yang wajar antar-penarikan data.
-2. **Kemanfaatan Pendidikan**: Data yang diperoleh ditujukan untuk kemudahan integrasi sistem, analisis data pendidikan, transparansi informasi publik, atau pengembangan aplikasi penunjang sekolah.
-3. **Privasi & Keamanan**: Pastikan informasi kredensial basis data Anda disimpan secara aman dan tidak diunggah ke repositori publik (*public repository*) tanpa penyensoran.
+1. **Hemat Trafik (Caching)**: Sangat disarankan menyimpan data statis (cache) di aplikasi Anda agar tidak melakukan panggilan request berulang untuk data yang sama.
+2. **Anti-Spam / Rate Limiting**: Dilarang keras melakukan *flooding* atau *DDoS* ke endpoint ini demi kelangsungan akses bersama.
+3. **Penggunaan Positif**: Bertujuan mendukung literasi digital dan transparansi informasi pendidikan Indonesia.
 
 ---
 
-## 🤝 Kontribusi & Ekosistem
+## 🤝 Ekosistem & Dukungan
 
-Bagian dari ekosistem **SmarQuest App**. Kontribusi perbaikan bug, penambahan fitur filter, dan optimalisasi query selalu terbuka melalui mekanisme *Pull Request* atau pembuatan *Issue*.
-
-*Dibuat untuk memajukan integrasi ekosistem pendidikan yang lebih adaptif, efisien, dan terbuka.*
+Dikembangkan sebagai subsistem data terbuka untuk **SmarQuest App**. Apabila Anda menemukan kendala data atau ingin berpartisipasi mengembangkan ekosistem ini, silakan buat *issue* pada repositori resmi.
